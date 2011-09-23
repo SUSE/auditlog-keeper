@@ -1,0 +1,15 @@
+SELECT
+     ID,
+     FACILITY,
+     LEVEL,
+     MESSAGE,
+     USERID,
+     IPADDR,
+     CREATED,
+     EXTMAP
+
+FROM
+     LOGBUFF
+
+LIMIT {int:limit}
+OFFSET {long:offset};

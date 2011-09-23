@@ -1,0 +1,6 @@
+DELETE
+FROM
+     LOGBUFF
+
+WHERE
+     ID = {long:id};

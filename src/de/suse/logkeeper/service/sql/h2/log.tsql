@@ -1,0 +1,16 @@
+INSERT INTO LOGBUFF(ID,
+                    FACILITY,
+                    LEVEL,
+                    MESSAGE,
+                    USERID,
+                    IPADDR,
+                    CREATED,
+                    EXTMAP)
+VALUES ({long:id},
+        {string:facility},
+        {string:level},
+        {string:message},
+        {string:userid},
+        {string:ipaddr},
+        now(),
+        {string:extmap});
