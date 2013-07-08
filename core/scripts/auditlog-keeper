@@ -1,0 +1,124 @@
+#!/bin/sh
+#
+# Copyright (c) 2011 SUSE Linux Products, GmbH
+# All rights reserved.
+#
+# Author: Bo Maryniuk, 2011
+#
+# /etc/init.d/auditlog-keeper
+# /usr/sbin/rcauditlog-keeper
+#
+### BEGIN INIT INFO
+# Provides:          auditlog-keeper
+# Required-Start: $syslog $local_fs $network $remote_fs
+# Required-Stop: $syslog $local_fs $network $remote_fs
+# Default-Start:     3 5
+# Default-Stop:      0 1 2 6
+# Short-Description: Audit log keeper daemon.
+# Description:       Audit log keeper daemon for data buffering.
+### END INIT INFO
+
+AK_USER=auditlog-keeper
+AK_GROUP=nobody
+AK_LOCK="/var/opt/auditlog-keeper/auditlog.lock.db"
+AK_BIN=/usr/bin/auditlog-keeper
+test -x $AK_BIN || { echo "Error: $AK_BIN is not installed!";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 5; fi; }
+
+. /etc/rc.status
+rc_reset
+
+getpid () {
+    PID_FILENAME=`cat /etc/auditlog-keeper.conf | grep server.pid.filename | grep -v '\#' | cut -d '=' -f2 | sed -e 's/ //'`
+    if [ "$PID_FILENAME" = "" ]; then
+	PID_FILENAME="/var/run/auditlog-keeper.pid"
+    fi
+
+    echo "$PID_FILENAME"
+}
+
+NAME="Audit Log Keeper"
+case "$1" in
+    start)
+        echo -n "Starting $NAME "
+        checkproc $AK_BIN
+        if [ $? -eq 0 ]; then
+            rc_failed 1
+            rc_status -v
+            exit 1
+        fi
+        if [ -f $AK_LOCK ]; then
+            rm $AK_LOCK
+        fi
+        export AK_PID=`getpid`
+        if [ -f $AK_PID ]; then
+            rm $AK_PID
+        fi
+        touch $AK_PID
+        chown $AK_USER:$AK_GROUP $AK_PID
+	sudo -u $AK_USER $AK_BIN 2>&1>/dev/null & disown
+        rc_status -v
+        ;;
+    stop)
+        echo -n "Shutting down $NAME "
+        checkproc $AK_BIN
+        if [ $? -ne 0 ]; then
+            rc_failed 1
+            rc_status -v
+            exit 1
+        fi
+        export AK_PID=`getpid`
+        if [ -f $AK_PID ]; then
+            kill -HUP `cat $AK_PID`
+            rm $AK_PID
+        fi
+
+        rc_status -v
+        ;;
+    restart)
+        $0 stop
+        $0 start
+
+        rc_status
+        ;;
+    try-restart|condrestart)
+        ## Do a restart only if the service was active before.
+        ## Note: try-restart is now part of LSB (as of 1.9).
+        ## RH has a similar command named condrestart.
+        if test "$1" = "condrestart"; then
+                echo "${attn} Use try-restart ${done}(LSB)${attn} rather than condrestart ${warn}(RH)${norm}"
+        fi
+        $0 status
+        if test $? = 0; then
+                $0 restart
+        else
+                rc_reset        # Not running is not a failure.
+        fi
+        # Remember status and be quiet
+        rc_status
+        ;;
+    reload)
+        # If it supports signaling:
+        echo -n "Reload service $NAME "
+        rc_failed 3
+        rc_status -v
+        ;;
+    force-reload)
+        echo -n "Reload service $NAME "
+        $0 try-restart
+        rc_status
+        ;;
+    status)
+        echo -n "Checking for service $NAME "
+        checkproc $AK_BIN
+        rc_status -v
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart|try-restart|force-reload}"
+        exit 1
+        ;;
+esac
+
+rc_exit
+

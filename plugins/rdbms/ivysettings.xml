@@ -1,0 +1,17 @@
+<ivysettings>
+  <settings defaultResolver="default" />
+  <resolvers>
+    <ibiblio name="central" m2compatible="true"/>  
+    <filesystem name="local">
+      <artifact pattern="${ivy.settings.dir}/ext/[artifact]-[revision].[ext]"/>
+    </filesystem>
+    <filesystem name="auditlog-core">
+      <artifact pattern="${ivy.settings.dir}/../../core/dist/[artifact].[ext]"/>
+    </filesystem>
+    <chain name="default">
+      <resolver ref="central"/>
+      <resolver ref="local"/>
+      <resolver ref="auditlog-core"/>
+    </chain>
+  </resolvers>
+</ivysettings>

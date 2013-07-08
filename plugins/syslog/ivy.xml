@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation=
+  "http://www.jayasoft.org/misc/ivy/samples/ivy.xsd">
+  
+  <info organisation="com.github.suse" module="auditlog-keeper-syslog"/>
+
+  <dependencies>
+    <dependency org="com.github.suse" name="auditlog-keeper" rev="0.1" />
+  </dependencies>
+</ivy-module>

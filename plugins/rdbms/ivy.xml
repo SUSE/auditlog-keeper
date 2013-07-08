@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation=
+  "http://www.jayasoft.org/misc/ivy/samples/ivy.xsd">
+  
+  <info organisation="com.github.suse" module="auditlog-keeper-rdbms"/>
+
+  <dependencies>
+    <!--dependency org="postgresql" name="postgresql" rev="9.0-801.jdbc4" />
+    <dependency org="com.oracle" name="ojdbc14" rev="10.2.0.4.0" />
+    <dependency org="com.oracle" name="classes12" rev="10.2.0.2.0" /-->
+    <dependency org="com.github.suse" name="auditlog-keeper" rev="0.1" />
+  </dependencies>
+</ivy-module>

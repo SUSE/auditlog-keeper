@@ -1,0 +1,234 @@
+About
+=====
+
+Audit Log Keeper is a software for buffering incoming messages and delivery
+them to the destinations. A destination can be any type of storage or search
+index etc as long as they are supported by Audit Log Keeper.
+
+
+Requirements
+============
+
+- Java Runtime 1.6
+
+
+Installation
+============
+
+Before the installation, it is important to know that there are three types of
+packages available:
+
+1. Audit Log Keeper itself (mandatory)
+2. Schema validators for a specific software (mandatory at least one)
+3. Output plugins (optional)
+
+Schema validators are sanitation filters that rejects inaccurate data from the
+client components and assures that the logging events are described in the
+same format.
+
+Output plugins are backend destination plugins to connect Audit Log Keeper
+with other data storages like databases, search machines, log analyzers etc.
+
+SUSE Linux installation instructions:
+
+   1. Install the Audit Log Keeper itself:
+
+      sudo zypper install auditlog-keeper
+
+   2. Choose a validator. For example, for SUSE Manager choose Spacewalk
+   validator:
+
+      sudo zypper install auditlog-keeper-spacewalk-validator
+
+   3. Optionally install backend. For instance, to add Syslog support, install
+   a required plugin:
+
+      sudo zypper install auditlog-keeper-syslog
+
+   4. Start service:
+
+      sudo /usr/sbin/rcauditlog-keeper status
+
+
+Configuration
+=============
+
+To configure Audit Log Keeper, issue the following command:
+
+      sudo /usr/bin/auditlog-keeper --configure
+
+This will just open the /etc/auditlog-keeper.conf file in your $EDITOR.
+
+Configuration file comes already preconfigured and works with a local syslog
+by a default. Later you will need only to correct some plugins information.
+
+
+Main configuration
+------------------
+
+
+     backend.db		         What embedded database is used. Currently
+     			         only H2 is supported.
+
+			         Valid choices:
+
+			     	       h2
+
+
+     backend.db.type	         Type of access to the back-end. The value
+                                 "multiple" will start an embedded server via
+                                 TCP protocol, while "single" will work in a
+                                 truly embedded mode. Use "single" only in
+                                 cases, where system load is little and minimal.
+
+     			         Valid choices:
+
+     			     	       multi
+			     	       single
+
+
+     backend.db.port             A port number on which an embedded database
+                                 is running in case of db.type is set to "multi".
+
+			         Default value:
+
+			     	       6868
+
+
+     backend.db.auth.user        User name for the embedded database. Make sure
+                                 you've changed it.
+
+
+     backend.db.auth.password    Password for the embedded database. Make sure
+                                 you've changed it.
+
+
+     backend.db.location         Location of the tables of the embedded
+                                 database. Advice: do not touch it.
+
+                                 Default location:
+
+                                       /var/opt/auditlog-keeper/auditlog
+
+
+     server.port                 XML-RPC port for the log listener. If you are
+                                 about to change it, you also have to make
+                                 sure *all* the clients "knows" about the change.
+
+                                 Default value:
+
+                                       6888
+
+
+     server.pid.filename         A location of the PID file. Advice: do not
+                                 touch it.
+
+                                 Default value:
+
+                                       /var/run/auditlog-keeper.pid
+
+
+Plugin Configuration
+--------------------     
+
+To make available a particular plugin among others, use the following syntax:
+
+    plugin.available = <TAG>, <TAG>, <TAG> ....
+
+<TAG> in this case can be any single word as a label. Minimum one word and
+comma-separated list of more than one. Example:
+
+    plugin.available = foo, bar
+
+
+Each plugin has its own set of config values. They are constructed with the
+following structure:
+
+    plugin.<TAG>.<VALUE>
+
+
+This is an example setting up a local syslog, tagged as "mylocalsyslog":
+
+1. Load a plugin description, pointing to the Audit Log Keeper what class it
+should pick up when it starts:
+
+    plugin.mylocalsyslog.entry = com.suse.logkeeper.plugins.Syslog
+
+2. Syslog supports three modes: a) local b) remote over TCP and c) remote over
+UDP protocol. Let's run it locally, so define protocol as "local":
+
+    plugin.mylocalsyslog.proto = local
+
+3. Syslog entry can include time when event happened on the audited
+system. This is different time when the entry was actually added to the Syslog
+back-end:
+
+    plugin.mylocalsyslog.fields.precisetime = on
+
+4. Let the Syslog plugin for the Audit Log Keeper also try to resolve a
+hostname out of the IP address and include it into the final message:
+
+    plugin.mylocalsyslog.fields.resolveip = on
+
+5. Let the Syslog plugin include extended mapping for the keywords. The extmap
+is essential auditing information, where all the sensitive data comes to. In
+some cases it might be necessary to mute it for the security reasons, but
+still leave only a general messages as a double-confirmation:
+
+    plugin.mylocalsyslog.fields.extmap = on
+
+6. Syslog itself is just a text. It will be difficult to reconcile the entries
+and filter out what is not required. Signature is just a label that each
+message will get as a tag, which will make easier to extract them out of the
+general Syslog text:
+
+    plugin.mylocalsyslog.fields.signature = spacewalk-audit
+
+
+7. Add this setup to the available plugins:
+
+    plugins.available = mylocalsyslog
+
+
+Another example, how to setup a remote syslog via TCP *along* with local. To
+achieve this, repeat the steps 1-6 above one more time, just with a different
+tag, for example name it as "tcp-syslog". Then do the following changes:
+
+1. Change the protocol to "tcp":
+
+    plugin.tcp-syslog.proto = tcp
+
+2. Define a remote host for a Syslog:
+
+    plugin.tcp-syslog.host = example.suse.de
+
+3. Define a remote port for a Syslog:
+
+    plugin.tcp-syslog.port = 514
+
+
+4. Add the tag to the list of available plugins:
+
+    plugins.available = mylocalsyslog, tcp-syslog
+
+
+At this point you will have two instances of Syslog plugin running, but one
+will deliver messages to the local syslog, another will deliver the same
+messages to remote machine.
+
+Audit Log Keeper comes with examples for other plugins in the configuration
+file. Please refer there for more information.
+
+
+Setting up database backend
+---------------------------
+
+Since the plugin does support multiple databases (currently only PostgreSQL
+and Oracle DB), then tn order to connect any of them, please make sure
+appropriate JDBC drivers are also installed on your system. Audit Log Keeper
+RDBMS plugin *does not takes care* about driver installation as they can be
+used simultaneously and totally independent from each other.
+
+For more information how to setup PostgreSQL or Oracle backend, please refer
+to the /etc/autitlog-keeper.conf configuration file and see the examples
+there.

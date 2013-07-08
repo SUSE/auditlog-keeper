@@ -1,0 +1,14 @@
+/core/build/
+/core/dist/
+/plugins/rdbms/nbproject/private/
+/plugins/syslog/nbproject/private/
+/plugins/xmlout/nbproject/private/
+/plugins/xmlout/build/
+/core/nbproject/private/
+/core/nbproject/private/
+/plugins/syslog/build/
+/plugins/syslog/dist/
+/plugins/rdbms/build/
+/plugins/rdbms/dist/
+*.jar
+
