@@ -92,15 +92,15 @@
         <ivy:resolve/> <!-- Tell Ivy to resolve dependencies -->
         <!-- Load dependencies to the project -->
         <ivy:retrieve sync="true" pattern="${ivy.retrieve.pattern}"/>
+        <!-- set the class directly from the cache -->
+        <!--ivy:cachepath pathid="ivy.classpath"/-->
         <pathconvert property="ivy.classpath.computed" dirsep="/" pathsep=":">
             <path>
                 <fileset dir="${basedir}/lib" includes="*.jar"/>
             </path>
             <map from="${basedir}${file.separator}" to=""/>
         </pathconvert>
-        <propertyfile file="${basedir}/nbproject/project.properties">
-            <entry operation="=" key="ivy.classpath" value="${ivy.classpath.computed}"/>
-        </propertyfile>
+        <property name="ivy.classpath" value="${ivy.classpath.computed}"/>
     </target>
     <target name="-post-init">
       <mkdir dir="${build.generated.sources.dir}"/>

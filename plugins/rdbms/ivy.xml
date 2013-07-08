@@ -10,6 +10,6 @@
     <!--dependency org="postgresql" name="postgresql" rev="9.0-801.jdbc4" />
     <dependency org="com.oracle" name="ojdbc14" rev="10.2.0.4.0" />
     <dependency org="com.oracle" name="classes12" rev="10.2.0.2.0" /-->
-    <dependency org="com.github.suse" name="auditlog-keeper" rev="0.1" />
+    <dependency org="com.github.suse" name="auditlog-keeper" rev="0.2.1" />
   </dependencies>
 </ivy-module>

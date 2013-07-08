@@ -9,7 +9,6 @@
       <dependency org="com.github.suse" name="tiny-sql-map" rev="0.1">
         <artifact name="tiny-sql-map" type="jar"/>
       </dependency>
-      <dependency transitive="false" org="org.apache.xmlrpc" name="xmlrpc" rev="3.1.3" />
       <dependency transitive="false" org="org.apache.xmlrpc" name="xmlrpc-common" rev="3.1.3" />
       <dependency transitive="false" org="org.apache.xmlrpc" name="xmlrpc-server" rev="3.1.3" />
       <dependency transitive="false" org="org.apache.xmlrpc" name="xmlrpc-client" rev="3.1.3" />

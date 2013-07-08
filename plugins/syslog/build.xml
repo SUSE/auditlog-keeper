@@ -98,9 +98,7 @@
             </path>
             <map from="${basedir}${file.separator}" to=""/>
         </pathconvert>
-        <propertyfile file="${basedir}/nbproject/project.properties">
-            <entry operation="=" key="ivy.classpath" value="${ivy.classpath.computed}"/>
-        </propertyfile>
+        <property name="ivy.classpath" value="${ivy.classpath.computed}"/>
     </target>
     <target name="-post-init">
       <mkdir dir="${build.generated.sources.dir}"/>

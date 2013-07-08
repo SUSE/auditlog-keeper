@@ -12,3 +12,4 @@
 /plugins/rdbms/dist/
 *.jar
 
+/validators/spacewalk/nbproject/private/

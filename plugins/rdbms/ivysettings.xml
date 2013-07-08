@@ -5,13 +5,13 @@
     <filesystem name="local">
       <artifact pattern="${ivy.settings.dir}/ext/[artifact]-[revision].[ext]"/>
     </filesystem>
-    <filesystem name="auditlog-core">
+    <filesystem name="parent">
       <artifact pattern="${ivy.settings.dir}/../../core/dist/[artifact].[ext]"/>
     </filesystem>
     <chain name="default">
       <resolver ref="central"/>
       <resolver ref="local"/>
-      <resolver ref="auditlog-core"/>
+      <resolver ref="parent"/>
     </chain>
   </resolvers>
 </ivysettings>
