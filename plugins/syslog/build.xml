@@ -71,6 +71,7 @@
     nbproject/build-impl.xml file. 
 
     -->
+
     <target name="-check-for-ivy">
         <available property="have.ivy" resource="fr/jayasoft/ivy/ant/antlib.xml"/>
     </target>
@@ -88,10 +89,18 @@
             </classpath>
         </taskdef>
     </target>
+
     <target name="-ivy-retrieve" depends="-ivy-define" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
         <ivy:resolve/> <!-- Tell Ivy to resolve dependencies -->
         <!-- Load dependencies to the project -->
         <ivy:retrieve sync="true" pattern="${ivy.retrieve.pattern}"/>
+    </target>
+
+    <target name="-post-init">
+      <mkdir dir="${build.generated.sources.dir}"/>
+    </target>
+
+    <target name="-set-ivy-classpath">
         <pathconvert property="ivy.classpath.computed" dirsep="/" pathsep=":">
             <path>
                 <fileset dir="${basedir}/lib" includes="*.jar"/>
@@ -100,12 +109,14 @@
         </pathconvert>
         <property name="ivy.classpath" value="${ivy.classpath.computed}"/>
     </target>
-    <target name="-post-init">
-      <mkdir dir="${build.generated.sources.dir}"/>
-    </target>
-    <target name="-pre-compile" depends="-ivy-retrieve"/>
-    <target name="-pre-compile-single" depends="-ivy-retrieve"/>
+
+    <target name="-pre-compile" depends="-set-ivy-classpath"/>
+
+    <target name="-pre-compile-single" depends="-set-ivy-classpath"/>
+
     <target name="-post-clean">
-        <delete dir="${build.generated.sources.dir}"/>
-    </target> 
+        <delete dir="${basedir}/lib"/>
+    </target>
+
+    <target name="resolve" depends="-ivy-retrieve"/>
 </project>
