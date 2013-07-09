@@ -9,7 +9,10 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="auditlog-keeper" default="default" basedir=".">
     <description>Builds, tests, and runs the project SUSELogKeeper.</description>
-    <property name="version" value="0.2" />
+    <property file="${basedir}/../auditlog-keeper.properties"/>
+    <echo>
+      auditlog keeper ${version}
+    </echo>
 
     <import file="nbproject/build-impl.xml"/>
     <!--

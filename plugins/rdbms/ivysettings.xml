@@ -1,17 +1,14 @@
 <ivysettings>
   <settings defaultResolver="default" />
   <resolvers>
-    <ibiblio name="central" m2compatible="true"/>  
-    <filesystem name="local">
-      <artifact pattern="${ivy.settings.dir}/ext/[artifact]-[revision].[ext]"/>
-    </filesystem>
-    <filesystem name="parent">
-      <artifact pattern="${ivy.settings.dir}/../../core/dist/[artifact].[ext]"/>
-    </filesystem>
-    <chain name="default">
-      <resolver ref="central"/>
-      <resolver ref="local"/>
-      <resolver ref="parent"/>
+    <chain name="default" returnFirst="true">
+      <filesystem name="parent">
+        <artifact pattern="${ivy.settings.dir}/../../core/dist/[artifact].[ext]"/>
+      </filesystem>
+      <filesystem name="local" >
+        <artifact pattern="${ivy.settings.dir}/ext/[artifact]-[revision].[ext]"/>
+      </filesystem>
+      <ibiblio name="central" m2compatible="true"/>
     </chain>
   </resolvers>
 </ivysettings>
