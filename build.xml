@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<project name="auditlog-keeper" default="tar">
+  <target name="tar">
+    <property file="auditlog-keeper.properties"/>
+    <tar
+      destfile="auditlog-keeper-${version}.tar.bz2"
+      compression="bzip2">
+      <tarfileset dir="${basedir}" prefix="auditlog-keeper-${version}" excludes=".git/**, .gitignore/**, **/*.class, **/*.jar, ./*.tar.gz, tmp/"/>
+    </tar>
+  </target>
+</project>
