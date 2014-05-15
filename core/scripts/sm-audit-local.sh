@@ -17,13 +17,14 @@ xmlrpc-common-3.1.3.jar
 h2-1.3.158.jar
 ws-commons-util-1.0.2.jar
 auditlog-keeper.jar
+auditlog-keeper-rdbms.jar
 "
 
 if [ "$EDITOR" = "" ]; then
   EDITOR=/usr/bin/vim
 fi
 
-LIB_PATH=/home/bo/projects/lib/log-keeper/dist/lib
+LIB_PATH=../lib
 for f in $LIBS; do
   CP=$CP:$LIB_PATH/$f
 done
@@ -39,9 +40,11 @@ if [ "$1" = "" ]; then
   $EXEC de.suse.logkeeper.Main --daemon $CONFIG
 else
   if [[ "$1" = "--init-database" && "$2" != "" ]]; then
-    OUT=`$EXEC com.suse.logkeeper.plugins.RDBMSLog $CONFIG $2 2>/dev/null`
+    OUT=`$EXEC com.suse.logkeeper.plugins.RDBMSLog $CONFIG $2`
     if [ "$?" != "0" ]; then
       echo "RDBMS plugin is not available at the moment."
+      echo
+      echo $OUT
     else
       echo $OUT
     fi
