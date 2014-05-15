@@ -193,6 +193,10 @@ public class RDBMSLog implements LogKeeperBackend {
      * Method to initialize log data.
      */
     protected void initDatabase() throws SQLException {
+        if (this.connection == null) {
+            throw new SQLException("Not connected to the database.");
+        }
+
         List<String> statements = new ArrayList<String>();
         if (this.vendor.equals(RDBMSLog.DB_POSTGRES)) {
             statements.add(this.getTextFromResource(this.getClass().getResourceAsStream("/com/suse/logkeeper/plugins/postgres-init.sql")));
