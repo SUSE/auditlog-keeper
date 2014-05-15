@@ -51,7 +51,9 @@ public class RDBMSLog implements LogKeeperBackend {
     public static final String DB_ORACLE_THIN = "oracle-thin";
 
     private static final String SCHEMA_LOG_TABLE = "AUDIT_LOG";
-
+    
+    private static final String FLAG_DEBUG = "";
+ 
     private String user;
     private String password;
     private String host;
@@ -61,6 +63,7 @@ public class RDBMSLog implements LogKeeperBackend {
     private String ssl;
 
     private Connection connection;
+    private boolean debug;
 
 
     public void setup(String definition, Properties setup) throws LogKeeperBackendException {
@@ -75,13 +78,30 @@ public class RDBMSLog implements LogKeeperBackend {
         try {
             this.connect();
         } catch (SQLException ex) {
-            Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            if (this.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("SQL Error: " + ex.getLocalizedMessage());
         } catch (InstantiationException ex) {
-            Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            if (this.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("RDBMS driver error: " + ex.getLocalizedMessage());
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            if (this.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("Access error: " + ex.getLocalizedMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            if (this.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(" Error: " + ex.getLocalizedMessage());
+        } catch (Exception ex) {
+            if (this.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("Connect error: " + ex.getLocalizedMessage());
         }
     }
 
@@ -274,27 +294,45 @@ public class RDBMSLog implements LogKeeperBackend {
 
     /**
      * @param args the command line arguments
+     * The argument is not meant to be used by humans.
+     * There are three argumens can be passed:
+     * 1. Path to the auditlog configuration file.
+     * 2. Tag of the database in the configuration file.
+     * 3. Comma-separated flags.
      */
     public static void main(String[] args){
-        if (args.length == 2) {
+        if (args.length > 1) {
+            boolean debug = args.length > 2 ? args[2].contains(RDBMSLog.FLAG_DEBUG) : false;
             try {
-                RDBMSLog.localInit(new URL(args[0]), args[1]);
+                RDBMSLog.localInit(new URL(args[0]), args[1], debug);
                 System.out.println("Done.");
             } catch (MalformedURLException ex) {
+                if (debug) {
+                    Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("URL is malformed: " + ex.getLocalizedMessage());
             } catch (URISyntaxException ex) {
+                if (debug) {
+                    Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("URL syntax error: " + ex.getLocalizedMessage());
             } catch (LogKeeperBackendException ex) {
+                if (debug) {
+                    Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("Log keeper exception: " + ex.getLocalizedMessage());
             } catch (SQLException ex) {
+                if (debug) {
+                    Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("SQL Error: " + ex.getLocalizedMessage());
             }
         } else {
-            System.out.println("Usage: " + RDBMSLog.class.getCanonicalName() + " <config url> <tag>");
+            System.out.println("Usage: " + RDBMSLog.class.getCanonicalName() + " <config url> <tag> [flag,flag1,...]");
         }
     }
 
-    public static void localInit(URL configPath, String tag)
+    public static void localInit(URL configPath, String tag, boolean debug)
             throws URISyntaxException,
                    LogKeeperBackendException,
                    SQLException {
@@ -303,11 +341,14 @@ public class RDBMSLog implements LogKeeperBackend {
             System.out.println(String.format("Error: %s is missing.", configPath));
         }
 
-        RDBMSLog log = new RDBMSLog();
+        RDBMSLog log = new RDBMSLog().setDebug(debug);
         Properties setup = new Properties();
         try {
             setup.load(new FileInputStream(conf));
         } catch (IOException ex) {
+            if (log.isDebug()) {
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);                
+            }
             System.out.println("Error: " + ex.getLocalizedMessage());
             System.exit(0);
         }
@@ -317,8 +358,27 @@ public class RDBMSLog implements LogKeeperBackend {
             System.out.println("Database was not found...");
             System.exit(0);
         }
-
+        
         log.setup(tag, setup);
         log.initDatabase();
+    }
+
+    /**
+     * Set debugging on or off.
+     *
+     * @param debug
+     * @return 
+     */
+    private RDBMSLog setDebug(boolean debug) {
+        this.debug = debug;
+        return this;
+    }
+
+    /**
+     * Debug mode status.
+     * @return 
+     */
+    protected boolean isDebug() {
+        return debug;
     }
 }
