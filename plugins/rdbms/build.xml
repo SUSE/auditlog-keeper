@@ -114,10 +114,7 @@
 
     <target name="-pre-compile-single" depends="-set-ivy-classpath"/>
 
-    <target name="-post-clean">
-        <delete dir="${basedir}/lib"/>
-    </target>
-
+    <target name="-post-clean"/>
     <target name="resolve" depends="-ivy-retrieve"/>
 
 </project>
