@@ -40,9 +40,12 @@ if [ "$1" = "" ]; then
   $EXEC de.suse.logkeeper.Main --daemon "file://$CONFIG"
 else
   if [[ "$1" = "--init-database" && "$2" != "" ]]; then
-    OUT=`$EXEC com.suse.logkeeper.plugins.RDBMSLog file://$CONFIG $2 2>/dev/null`
+    OUT=`$EXEC com.suse.logkeeper.plugins.RDBMSLog file://$CONFIG $2`
     if [ "$?" != "0" ]; then
       echo "RDBMS plugin is not available at the moment."
+      echo
+      echo "Error output:"
+      echo $OUT
     else
       echo $OUT
     fi
