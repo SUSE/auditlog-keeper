@@ -51,9 +51,9 @@ public class RDBMSLog implements LogKeeperBackend {
     public static final String DB_ORACLE_THIN = "oracle-thin";
 
     private static final String SCHEMA_LOG_TABLE = "AUDIT_LOG";
-    
+
     private static final String FLAG_DEBUG = "";
- 
+
     private String user;
     private String password;
     private String host;
@@ -164,7 +164,7 @@ public class RDBMSLog implements LogKeeperBackend {
 
     /**
      * Allocate a log entry ID.
-     * 
+     *
      * @return
      */
     private Long allocateId() {
@@ -230,7 +230,7 @@ public class RDBMSLog implements LogKeeperBackend {
 
     /**
      * Get test from the resource.
-     * 
+     *
      * @param inputStream
      * @return
      */
@@ -351,7 +351,7 @@ public class RDBMSLog implements LogKeeperBackend {
             setup.load(new FileInputStream(conf));
         } catch (IOException ex) {
             if (log.isDebug()) {
-                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);                
+                Logger.getLogger(RDBMSLog.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.println("Error: " + ex.getLocalizedMessage());
             System.exit(0);
@@ -362,7 +362,7 @@ public class RDBMSLog implements LogKeeperBackend {
             System.out.println("Database was not found...");
             System.exit(0);
         }
-        
+
         log.setup(tag, setup);
         log.initDatabase();
     }
@@ -371,7 +371,7 @@ public class RDBMSLog implements LogKeeperBackend {
      * Set debugging on or off.
      *
      * @param debug
-     * @return 
+     * @return
      */
     private RDBMSLog setDebug(boolean debug) {
         this.debug = debug;
@@ -380,7 +380,7 @@ public class RDBMSLog implements LogKeeperBackend {
 
     /**
      * Debug mode status.
-     * @return 
+     * @return
      */
     protected boolean isDebug() {
         return debug;
