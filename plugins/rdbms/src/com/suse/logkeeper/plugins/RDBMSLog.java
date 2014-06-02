@@ -53,6 +53,8 @@ public class RDBMSLog implements LogKeeperBackend {
     private static final String SCHEMA_LOG_TABLE = "AUDIT_LOG";
 
     private static final String FLAG_DEBUG = "";
+    private static final int MAX_MSG_LENGTH = 4096;
+    private static final int MAX_UID_LENGTH = 255;
 
     private String user;
     private String password;
@@ -135,15 +137,44 @@ public class RDBMSLog implements LogKeeperBackend {
     private void insertEntry(Long id, LogEntry entry) throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement("INSERT INTO AUDIT_LOG_ENTRIES "
                 + "(ENTRY_ID, LOG_LEVEL, MESSAGE, USERID, IPADDR, HAPPENED) VALUES (?, ?, ?, ?, ?, ?)");
+        String message = RDBMSLog.limit(entry.getMessage(), RDBMSLog.MAX_MSG_LENGTH);
+        if (message.isEmpty()) {
+            throw new SQLException("The message cannot be empty!");
+        }
+
+        String uid = RDBMSLog.limit(entry.getUserName(), RDBMSLog.MAX_UID_LENGTH);
+        if (uid.isEmpty()) {
+            throw new SQLException("The UID of the message cannot be empty!");
+        }
+
         statement.setLong(1, id);
         statement.setLong(2, entry.getLevel());
-        statement.setString(3, entry.getMessage());
-        statement.setString(4, entry.getUserName());
+        statement.setString(3, message);
+        statement.setString(4, uid);
         statement.setString(5, entry.getNode().getHostAddress());
         statement.setTimestamp(6, (Timestamp) entry.getTimestamp());
         statement.execute();
     }
 
+    /**
+     * Limit the entry to the certain length.
+     *
+     * @param value
+     * @param length
+     * @return
+     */
+    private static String limit(String value, int length) {
+        if (value == null) {
+            value = "";
+        }
+
+        value = value.trim();
+        if (value.length() > length) {
+            value = value.substring(0, length - 1);
+        }
+
+        return value;
+    }
 
     /**
      * Insert all ext-map to the database.
