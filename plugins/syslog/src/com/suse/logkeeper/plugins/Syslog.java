@@ -125,7 +125,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Send a log message to the syslog.
-     * 
+     *
      * @param entry
      * @throws LogKeeperBackendException
      */
@@ -196,7 +196,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Format message for the logger.
-     * 
+     *
      * @param entry
      * @return
      */
@@ -208,7 +208,7 @@ public class Syslog implements LogKeeperBackend {
                     .append(entry.getISO8601Timestamp())
                     .append(" ");
         }
-        
+
         if (this.fieldResolveIP) {
             message.append(entry.getNode().getCanonicalHostName())
                     .append(" (")
@@ -217,7 +217,7 @@ public class Syslog implements LogKeeperBackend {
         }
 
         message.append(entry.getMessage());
-        
+
         if (this.fieldExtmap) {
             message.append(" ").append(this.renderExtMapForSyslog(entry));
         }
@@ -228,7 +228,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Tied up each extmap in a syslog to a particular message.
-     * 
+     *
      * @param entry
      * @param id
      * @return
