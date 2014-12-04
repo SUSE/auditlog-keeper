@@ -74,6 +74,25 @@ case "$1" in
             rm $AK_PID
         fi
 
+        # Make sure the process actually disappeared
+        checkproc $AK_BIN
+        STOPPED=$?
+        TRIES="0"
+        if [ $STOPPED -eq 0 ]; then
+            while [ $STOPPED -eq 0 ]
+            do
+               sleep 1
+               checkproc $AK_BIN
+               STOPPED=$?
+               TRIES=$[$TRIES + 1]
+               if [ $TRIES -gt 5 ]; then
+                   rc_failed 1
+                   rc_status -v
+                   exit 1
+               fi
+            done
+        fi
+
         rc_status -v
         ;;
     restart)
