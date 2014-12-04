@@ -80,7 +80,7 @@ public class Syslog implements LogKeeperBackend {
         try {
             String host = setup.getProperty("plugin." + definition + ".host", "");
             this.address = new InetSocketAddress(!host.equals("") && !host.toLowerCase().equals("localhost")
-                                                 ? InetAddress.getByName(host) : InetAddress.getLocalHost(), Syslog.DEFAULT_SYSLOG_PORT);
+                                                 ? InetAddress.getByName(host) : InetAddress.getByName(null), Syslog.DEFAULT_SYSLOG_PORT);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Syslog.class.getName()).log(Level.SEVERE, null, ex);
         }
