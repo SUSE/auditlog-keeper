@@ -304,8 +304,8 @@ public class Syslog implements LogKeeperBackend {
 
         Syslog syslog = new Syslog();
         syslog.setup("syslog", new Properties());
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 1", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 2", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 3", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 1", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 2", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 3", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
     }
 }
