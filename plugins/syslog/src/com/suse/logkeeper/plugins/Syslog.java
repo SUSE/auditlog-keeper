@@ -80,7 +80,7 @@ public class Syslog implements LogKeeperBackend {
         try {
             String host = setup.getProperty("plugin." + definition + ".host", "");
             this.address = new InetSocketAddress(!host.equals("") && !host.toLowerCase().equals("localhost")
-                                                 ? InetAddress.getByName(host) : InetAddress.getLocalHost(), Syslog.DEFAULT_SYSLOG_PORT);
+                                                 ? InetAddress.getByName(host) : InetAddress.getByName(null), Syslog.DEFAULT_SYSLOG_PORT);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Syslog.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -125,7 +125,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Send a log message to the syslog.
-     * 
+     *
      * @param entry
      * @throws LogKeeperBackendException
      */
@@ -196,7 +196,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Format message for the logger.
-     * 
+     *
      * @param entry
      * @return
      */
@@ -208,7 +208,7 @@ public class Syslog implements LogKeeperBackend {
                     .append(entry.getISO8601Timestamp())
                     .append(" ");
         }
-        
+
         if (this.fieldResolveIP) {
             message.append(entry.getNode().getCanonicalHostName())
                     .append(" (")
@@ -217,7 +217,7 @@ public class Syslog implements LogKeeperBackend {
         }
 
         message.append(entry.getMessage());
-        
+
         if (this.fieldExtmap) {
             message.append(" ").append(this.renderExtMapForSyslog(entry));
         }
@@ -228,7 +228,7 @@ public class Syslog implements LogKeeperBackend {
 
     /**
      * Tied up each extmap in a syslog to a particular message.
-     * 
+     *
      * @param entry
      * @param id
      * @return
@@ -304,8 +304,8 @@ public class Syslog implements LogKeeperBackend {
 
         Syslog syslog = new Syslog();
         syslog.setup("syslog", new Properties());
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 1", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 2", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
-        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 3", System.getProperty("user.name"), InetAddress.getLocalHost(), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 1", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 2", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
+        syslog.log(new LogEntry(1L, "audit", 1, "Hello, world! 3", System.getProperty("user.name"), InetAddress.getByName(null), new Date(), extmap));
     }
 }
