@@ -9,7 +9,7 @@ CP=$CLASSPATH
 CONFIG="/etc/auditlog-keeper.conf"
 
 LIBS="
-jakarta-commons-logging.jar
+commons-logging.jar
 tiny-sqlmap.jar
 apache-xmlrpc3-client.jar
 apache-xmlrpc3-server.jar
