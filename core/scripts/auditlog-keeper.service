@@ -1,0 +1,12 @@
+[Unit]
+Description=Audit log keeper daemon
+After=network.target
+Before=tomcat.service apache2.service
+
+[Service]
+User=auditlog-keeper
+Group=nobody
+ExecStart=/usr/bin/auditlog-keeper
+
+[Install]
+WantedBy=multi-user.target
